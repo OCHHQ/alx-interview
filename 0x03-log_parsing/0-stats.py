@@ -26,6 +26,7 @@ def print_stats():
 
 
 def main():
+    """Main function."""
     global total_size, status_counts, line_count
     total_size = 0
     status_counts = defaultdict(int)
@@ -46,7 +47,6 @@ def main():
 
         if line_count % 10 == 0:
             print_stats()
-
     print_stats()
 
 
