@@ -34,17 +34,23 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     for line in sys.stdin:
-        line_count += 1
-        parts = line.split()
-
-        if len(parts) != 10 or parts[6] != 'HTTP/1.1"':
+        parts = line.split('"')
+        if len(parts) < 2:
             continue
-
-        status_code = int(parts[8])
-        file_size = int(parts[9])
+        request = parts[1].split()
+        if len(request) < 2:
+            continue
+        status_code = request[-1]
+        if not status_code.isdigit():
+            continue
+        status_code = int(status_code)
+        file_size = parts[-1].split()[-1]
+        if not file_size.isdigit():
+            continue
+        file_size = int(file_size)
         total_size += file_size
         status_counts[status_code] += 1
-
+        line_count += 1
         if line_count % 10 == 0:
             print_stats()
     print_stats()
