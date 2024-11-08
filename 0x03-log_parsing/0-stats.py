@@ -32,17 +32,17 @@ def parse_line(line):
     global total_size, status_counts
     try:
         parts = line.split()
-        # Ensure the line has enough parts
-        if len(parts) < 7:
+        if len(parts) < 7:  # Ensure there are enough parts to parse
             return
         status_code = parts[-2]
         file_size = parts[-1]
-        # Check if status code and file size are valid
+
+        # Check if status code is valid and file size is a number
         if status_code in valid_status_codes and file_size.isdigit():
             status_counts[status_code] += 1
             total_size += int(file_size)
     except Exception:
-        pass  # Ignore any parsing errors
+        pass  # Safely handle any parsing errors
 
 
 def signal_handler(sig, frame):
@@ -55,13 +55,14 @@ def main():
     """Main function to read from stdin and parse lines."""
     global line_count
     signal.signal(signal.SIGINT, signal_handler)
+
     try:
         for line in sys.stdin:
             parse_line(line.strip())
             line_count += 1
             if line_count % 10 == 0:
                 print_stats()
-        print_stats()  # Print final statistics
+        print_stats()  # Print final statistics if the input ends normally
     except KeyboardInterrupt:
         print_stats()
         sys.exit(0)
