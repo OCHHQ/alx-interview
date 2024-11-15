@@ -1,25 +1,51 @@
 #!/usr/bin/node
 
 const request = require('request');
-const movieId = process.argv[2];
-const apiUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
 
-request(apiUrl, (error, response, body) => {
+// Check if movie ID is provided
+if (process.argv.length !== 3) {
+  console.error('Usage: ./0-starwars_characters.js <movie_id>');
+  process.exit(1);
+}
+
+const movieId = process.argv[2];
+const filmUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
+
+// Function to get character name from URL
+function getCharacterName(characterUrl) {
+  return new Promise((resolve, reject) => {
+    request(characterUrl, (error, response, body) => {
+      if (error) {
+        reject(error);
+      } else {
+        const character = JSON.parse(body);
+        resolve(character.name);
+      }
+    });
+  });
+}
+
+// Main function to get and display characters
+request(filmUrl, async (error, response, body) => {
   if (error) {
     console.error('Error:', error);
     return;
   }
-  const filmData = JSON.parse(body);
-  const characters = filmData.characters;
 
-  characters.forEach((characterUrl) => {
-    request(characterUrl, (error, response, body) => {
-      if (error) {
-        console.error('Error:', error);
-        return;
+  try {
+    const film = JSON.parse(body);
+    const characters = film.characters;
+
+    // Get all character names in order
+    for (const characterUrl of characters) {
+      try {
+        const name = await getCharacterName(characterUrl);
+        console.log(name);
+      } catch (err) {
+        console.error('Error fetching character:', err);
       }
-      const characterData = JSON.parse(body);
-      console.log(characterData.name);
-    });
-  });
+    }
+  } catch (parseError) {
+    console.error('Error parsing response:', parseError);
+  }
 });
