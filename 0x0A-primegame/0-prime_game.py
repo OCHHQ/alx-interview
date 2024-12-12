@@ -46,5 +46,5 @@ def isWinner(x, nums):
     if maria_wins * 2 == len(nums):
         return None
     if maria_wins * 2 > len(nums):
-        return "me"
-    return "col"
+        return "Maria"
+    return "Ben"
