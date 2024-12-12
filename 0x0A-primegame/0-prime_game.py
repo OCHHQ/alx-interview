@@ -17,7 +17,7 @@ def isWinner(x, nums):
         return None
 
     max_num = max(nums)
-    
+
     # Create Sieve of Eratosthenes
     my_filter = [True] * (max_num + 1)
     my_filter[0] = my_filter[1] = False
